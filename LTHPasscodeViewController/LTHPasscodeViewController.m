@@ -92,6 +92,8 @@ options:NSNumericSearch] != NSOrderedAscending)
 @property (nonatomic, assign) BOOL        useFallbackPasscode;
 @property (nonatomic, assign) BOOL        isAppNotificationsObserved;
 
+@property (nonatomic, assign) UIStatusBarStyle      previousStatusBarStyle;
+
 #if !(TARGET_IPHONE_SIMULATOR)
 @property (nonatomic, strong) LAContext   *touchIDContext;
 #endif
@@ -496,6 +498,11 @@ static const NSInteger LTHMaxPasscodeDigits = 10;
         [_passcodeTextField resignFirstResponder];
         _animatingView.hidden = _isUsingTouchID;
     }
+    
+    if (!_isUsingNavBar) {
+        self.previousStatusBarStyle = [UIApplication sharedApplication].statusBarStyle;
+        [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
+    }
 }
 
 
@@ -511,6 +518,10 @@ static const NSInteger LTHMaxPasscodeDigits = 10;
     
     if (!_displayedAsModal && !_displayedAsLockScreen) {
         [self textFieldShouldEndEditing:_passcodeTextField];
+    }
+    
+    if (!_isUsingNavBar) {
+        [[UIApplication sharedApplication] setStatusBarStyle:self.previousStatusBarStyle];
     }
 }
 
